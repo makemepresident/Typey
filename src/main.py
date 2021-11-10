@@ -1,10 +1,10 @@
 from blessed import Terminal
+from blessed.sequences import Sequence
 from random import randint
 import time
 
 # https://gist.github.com/deekayen/4148741#file-1-1000-txt
 all_words = open("./assets/1-1000.txt").read().split()  # read all words in 1-1000.txt
-MAX_LENGTH = 50
 
 class Challenge:
 
@@ -46,25 +46,19 @@ class Challenge:
             return True
         return False
 
-# def generate_word_map():
-#     word_map = {}
-#     for i in all_words:
-#         if len(i) not in word_map:
-#             word_map[len(i)] = []
-#         word_map[len(i)].append(i)
-#     return word_map
-
 def generate_word(stack):
     output = ""
     for i in stack:
         output += i
     return output.strip()
 
-LENGTH = 5
+LENGTH = 25
 LINE_WORD_LIMIT = 10
 
 terminal = Terminal()
-complete = terminal.blue_on_darkkhaki
+backdrop = ""
+redraw = terminal.home + backdrop + terminal.clear
+complete = terminal.white_on_darkkhaki
 incomplete = terminal.black_on_darkkhaki
 challenge = Challenge(LENGTH, complete, incomplete)
 
@@ -79,8 +73,8 @@ with terminal.cbreak(), terminal.hidden_cursor():
     print(terminal.home + terminal.clear)
     stack = []
     while True:
-        print(terminal.clear + terminal.center(challenge.render(LINE_WORD_LIMIT)))
-        print(terminal.move_down(1) + generate_word(stack))
+        print(redraw + challenge.render(LINE_WORD_LIMIT))
+        print(terminal.move_down(1) + complete(generate_word(stack)))
         if challenge.finish():
             final_time = time.time()
             words_per_minute = (LENGTH * 60) // (final_time - initial_time)
@@ -96,34 +90,3 @@ with terminal.cbreak(), terminal.hidden_cursor():
             stack.append(inp)
         if challenge.press(generate_word(stack)):
             stack = []
-
-
-# min_key = min(word_map.keys())
-# max_key = max(word_map.keys())
-
-# output = ""
-# for i in range(50):
-#     remaining_space = MAX_LENGTH - len(output)
-#     if(remaining_space > 0 and remaining_space < max_key):
-#         output += word_map[remaining_space][randint(1, len(word_map[remaining_space]) - 1)]
-#         print(terminal.center(terminal.black_on_darkkhaki(output)))
-#         output = ""
-#     length = randint(min_key, max_key)
-#     output += word_map[length][randint(0, len(word_map[length]) - 1)] + " "
-
-# stack = []
-# terminal.move_down(1)
-# written = ""
-# while True:
-#     with terminal.cbreak(), terminal.hidden_cursor():
-#         inp = terminal.inkey()
-#     if(inp == terminal.KEY_ENTER): # change handling to assert word, check if correct (on space too)
-#         print(terminal.move_down(1))
-#     print(terminal.move_up(1) + terminal.clear_eol + terminal.move_up(1))
-#     if(inp == terminal.KEY_BACKSPACE or inp == terminal.KEY_DELETE):
-#         written = stack[-1]
-#         del stack[-1]
-#     else:
-#         written += terminal.bold(inp)
-#     stack.append(written)
-#     print(terminal.center(written))
