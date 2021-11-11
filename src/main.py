@@ -10,39 +10,43 @@ class Challenge:
 
     def __init__(self, length, complete, incomplete) -> None:
         self.pointer = 0
-        self.words = self.generate_challenge(length)
+        self.letter_stack = self.generate_challenge(length)
         self.complete = complete
         self.incomplete = incomplete
 
     def generate_challenge(self, length):
-        words = []
+        letters = []
         for i in range(length):
-            words.append(all_words[randint(0, len(all_words) - 1)])
-        return words
+            word = all_words[randint(0, len(all_words) - 1)]
+            for letter in word:
+                letters.append(letter)
+            if i != length - 1:
+                letters.append(" ")
+        return letters
 
-    def press(self, word):
-        if word == self.words[self.pointer]:
-            self.pointer += 1
-            return True
-        return False
+    def press(self, stack):
+        self.pointer = 0
+        for i in range(len(stack)):
+            if self.letter_stack[i] == stack[i]:
+                self.pointer += 1
 
     def render(self, line_word_limit):
         output = ""
-        for ind, val in enumerate(self.words):
-            if ind % line_word_limit == 0:
-                output += "\n"
+        for ind, val in enumerate(self.letter_stack):
+            # if ind % line_word_limit == 0:
+            #     output += "\n"
             if ind < self.pointer:
                 output += self.complete(val)
             else:
                 output += self.incomplete(val)
-            if ind == len(self.words) - 1:
-                break
-            else:
-                output += self.incomplete(" ")
+            # if ind == len(self.words) - 1:
+            #     break
+            # else:
+            #     output += self.incomplete(" ")
         return output
 
     def finish(self):
-        if self.pointer == len(self.words):
+        if self.pointer == len(self.letter_stack):
             return True
         return False
 
@@ -74,7 +78,8 @@ with terminal.cbreak(), terminal.hidden_cursor():
     stack = []
     while True:
         print(redraw + challenge.render(LINE_WORD_LIMIT))
-        print(terminal.move_down(1) + complete(generate_word(stack)))
+        # print(redraw + challenge.render(LINE_WORD_LIMIT))
+        # print(terminal.move_down(1) + complete(generate_word(stack)))
         if challenge.finish():
             final_time = time.time()
             words_per_minute = (LENGTH * 60) // (final_time - initial_time)
@@ -88,5 +93,4 @@ with terminal.cbreak(), terminal.hidden_cursor():
                 del stack[-1]
         else:
             stack.append(inp)
-        if challenge.press(generate_word(stack)):
-            stack = []
+        challenge.press(stack)
