@@ -1,42 +1,33 @@
 from blessed import Terminal
-from blessed.sequences import Sequence
 from random import randint
 import time
 
-# https://gist.github.com/deekayen/4148741#file-1-1000-txt
-all_words = open("./assets/1-1000.txt").read().split()  # read all words in 1-1000.txt
-
 class Challenge:
 
-    def __init__(self, length, complete, incomplete) -> None:
-        self.pointer = 0
-        self.letter_stack = self.generate_challenge(length)
-        self.complete = complete
-        self.incomplete = incomplete
+    def __init__(self, theme) -> None:
+        self.terminal = Terminal()
+        self.theme = theme
 
-    def generate_challenge(self, length):
-        letters = []
+    def generate_challenge(self, word_list, length):
+        self.stack = []
         for i in range(length):
-            word = all_words[randint(0, len(all_words) - 1)]
+            word = word_list[randint(0, len(word_list) - 1)]
             for letter in word:
-                letters.append(letter)
+                stack.append(letter)
             if i != length - 1:
-                letters.append(" ")
-        return letters
+                stack.append(" ")
 
-    def press(self, stack):
+    def press(self, current_stack):
         self.pointer = 0
-        for i in range(len(stack)):
-            if self.letter_stack[i] == stack[i]:
+        for i in range(len(current_stack)):
+            if self.stack[i] == current_stack[i]:
                 self.pointer += 1
 
-    def render(self, line_word_limit):
+    def render(self):
         output = ""
-        for ind, val in enumerate(self.letter_stack):
-            # if ind % line_word_limit == 0:
-            #     output += "\n"
-            if ind < self.pointer:
-                output += self.complete(val)
+        for index, value in enumerate(self.stac):
+            if index =< self.pointer:
+                output += self.theme.complete(value)
             else:
                 output += self.incomplete(val)
             # if ind == len(self.words) - 1:
