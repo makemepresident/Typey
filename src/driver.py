@@ -9,10 +9,10 @@ from challenge import Challenge
 from theme import Theme
 import argparse
 
-parser = argparse.ArgumentParser("Create a typing challenge for a certain amount of words")
+parser = argparse.ArgumentParser("Create quick, repeatable, regenerative typing tests in your terminal.")
 
-parser.add_argument("--l", dest="length", default="25", help="Length of the typing test in words (10, 30, 50, or 100)")
-parser.add_argument("--t", dest="theme", default="default", help="Typing test theme")
+parser.add_argument("--l", dest="length", default="25", help="Length of the typing test in words. DEFAULT=25")
+parser.add_argument("--t", dest="theme", default="default", help="Colour theme of the terminal; changing this will set a new default in JSON. DEFAULT=on_darkkhaki")
 
 args = parser.parse_args()
 
@@ -22,21 +22,28 @@ elif int(args.length) < 1:
     args.length = 1
 
 terminal = Terminal()
-challenge = Challenge(args.length, Theme(args.theme), terminal)
-all_words = open("../assets/1-1000.txt").read().split()  # read all words in 1-1000.txt
+theme = Theme(args.theme)
+challenge = Challenge(args.length, theme, terminal)
+all_words = open("./assets/1-1000.txt").read().split()  # read all words in 1-1000.txt
 reset = False
 
 while True:
-    if not reset:
-        challenge.generate_challenge(all_words)
-    else:
-        challenge.reset()
-    reset = True
-    challenge.main_loop()
-    with terminal.cbreak(), terminal.hidden_cursor():
-        inp = terminal.inkey()
-        if inp.code == terminal.KEY_TAB:
-            reset = False
-        elif inp.code == terminal.KEY_ESCAPE:
-            print(terminal.home + terminal.clear)
+    with terminal.fullscreen():
+        if not reset:
+            challenge.generate_challenge(all_words)
+        else:
+            challenge.reset()
+        reset = True
+        if challenge.main_loop():
+            words_per_minute = str((challenge.length * 60) / (challenge.final_time - challenge.initial_time))
+            print(terminal.home + terminal.clear + terminal.move_y(terminal.height // 2) + theme.incomplete(terminal.center(words_per_minute[:words_per_minute.index(".") + 2] + " WPM")))
+            print(theme.incomplete(terminal.center("Press tab to start a new challenge; press any other key to try the same challenge again...")))
+            with terminal.cbreak(), terminal.hidden_cursor():
+                inp = terminal.inkey()
+                if inp.code == terminal.KEY_TAB:
+                    reset = False
+                elif inp.code == terminal.KEY_ESCAPE:
+                    print(terminal.home + terminal.clear)
+                    exit()
+        else:
             exit()
