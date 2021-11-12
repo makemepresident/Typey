@@ -4,7 +4,7 @@
 * Responsible for determining the theme from input
 * Responsible for starting and stopping game loop (automatic retries, generate new)
 '''
-
+from blessed import Terminal
 from challenge import Challenge
 from theme import Theme
 import argparse
@@ -16,9 +16,22 @@ parser.add_argument("--t", dest="theme", default="default", help="Typing test th
 
 args = parser.parse_args()
 
-challenge = Challenge(args.length, Theme(args.theme))
+terminal = Terminal()
+challenge = Challenge(args.length, Theme(args.theme), terminal)
+all_words = open("../assets/1-1000.txt").read().split()  # read all words in 1-1000.txt
+reset = False
 
-all_words = open("./assets/1-1000.txt").read().split()  # read all words in 1-1000.txt
-
-challenge.generate_challenge(all_words)
-challenge.main_loop()
+while True:
+    if not reset:
+        challenge.generate_challenge(all_words)
+    else:
+        challenge.reset()
+    reset = True
+    challenge.main_loop()
+    with terminal.cbreak(), terminal.hidden_cursor():
+        inp = terminal.inkey()
+        if inp.code == terminal.KEY_TAB:
+            reset = False
+        elif inp.code == terminal.KEY_ESCAPE:
+            print(terminal.home + terminal.clear)
+            exit()

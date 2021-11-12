@@ -6,7 +6,7 @@ class Theme:
     def __init__(self, name) -> None:
         terminal = Terminal()
         try:
-            file = open("./assets/themes.json")
+            file = open("../assets/themes.json")
             js = json.load(file)
             self.complete = getattr(terminal, js[name]["c"])
             self.incomplete = getattr(terminal, js[name]["i"])
