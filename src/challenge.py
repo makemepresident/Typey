@@ -63,8 +63,10 @@ class Challenge:
         with self.terminal.cbreak(), self.terminal.hidden_cursor():
             if not self.has_reset:
                 print(self.terminal.home + self.terminal.clear + self.terminal.move_y(self.terminal.height // 2))
-                print(self.theme.incomplete(self.terminal.center(str(self.length) + " word challenge generated; press any key to continue...")))
+                print(self.theme.incomplete(self.terminal.center(str(self.length) + " word challenge generated; press any key to continue; press ESC twice at any time to exit...")))
                 inp = self.terminal.inkey()
+                if inp.code == self.terminal.KEY_ESCAPE:
+                    return
             current_stack = []
             while True:
                 print(redraw + self.terminal.move_y(self.terminal.height // 2) + self.render(current_stack))
@@ -73,7 +75,7 @@ class Challenge:
                     # accuracy = self.evaluate_accuracy(current_stack)
                     words_per_minute = str((self.length * 60) / (self.final_time - self.initial_time))
                     print(redraw + self.terminal.move_y(self.terminal.height // 2) + self.theme.incomplete(self.terminal.center(words_per_minute[:words_per_minute.index(".") + 2] + " WPM")))
-                    print(self.theme.incomplete(self.terminal.center("Press tab to start a new challenge; press any other key to try the same challenge again; press ESC to exit...")))
+                    print(self.theme.incomplete(self.terminal.center("Press tab to start a new challenge; press any other key to try the same challenge again...")))
                     break
                 inp = self.terminal.inkey()
                 if self.initial_time == None:
@@ -81,5 +83,7 @@ class Challenge:
                 if inp.code == self.terminal.KEY_BACKSPACE:
                     if len(current_stack) != 0:
                         del current_stack[-1]
+                elif inp.code == self.terminal.KEY_ESCAPE:
+                    return
                 else:
                     current_stack.append(inp)

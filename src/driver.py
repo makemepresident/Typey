@@ -16,6 +16,11 @@ parser.add_argument("--t", dest="theme", default="default", help="Typing test th
 
 args = parser.parse_args()
 
+if int(args.length) > 50:
+    args.length = 50
+elif int(args.length) < 1:
+    args.length = 1
+
 terminal = Terminal()
 challenge = Challenge(args.length, Theme(args.theme), terminal)
 all_words = open("../assets/1-1000.txt").read().split()  # read all words in 1-1000.txt
