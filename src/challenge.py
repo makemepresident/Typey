@@ -4,18 +4,21 @@ import time
 
 class Challenge:
 
-    def __init__(self, theme) -> None:
+    def __init__(self, length, theme) -> None:
         self.terminal = Terminal()
+        self.length = int(length)
         self.theme = theme
 
-    def generate_challenge(self, word_list, length):
+    def generate_challenge(self, word_list):
+        self.pointer = 0
+        self.initial_time = None
         self.stack = []
-        for i in range(length):
+        for i in range(self.length):
             word = word_list[randint(0, len(word_list) - 1)]
             for letter in word:
-                stack.append(letter)
-            if i != length - 1:
-                stack.append(" ")
+                self.stack.append(letter)
+            if i != self.length - 1:
+                self.stack.append(" ")
 
     def press(self, current_stack):
         self.pointer = 0
@@ -23,65 +26,52 @@ class Challenge:
             if self.stack[i] == current_stack[i]:
                 self.pointer += 1
 
-    def render(self):
+    def render(self, current_stack):
+        self.press(current_stack)
+        final = ""
         output = ""
-        for index, value in enumerate(self.stac):
-            if index =< self.pointer:
+        width_check = 0
+        for index, value in enumerate(self.stack):
+            width_check += 1
+            if width_check > self.terminal.width - (self.terminal.width // 2) and value == " ":
+                final += self.theme.backdrop(self.terminal.center(output))
+                output = ""
+                width_check = 0
+            if index < self.pointer:
                 output += self.theme.complete(value)
+            elif index < len(current_stack):
+                output += self.terminal.on_red(value)
             else:
-                output += self.incomplete(val)
-            # if ind == len(self.words) - 1:
-            #     break
-            # else:
-            #     output += self.incomplete(" ")
-        return output
+                output += self.theme.incomplete(value)
+        return final + self.theme.backdrop(self.terminal.center(output))
 
     def finish(self):
-        if self.pointer == len(self.letter_stack):
+        if self.pointer == len(self.stack):
             return True
         return False
 
-def generate_word(stack):
-    output = ""
-    for i in stack:
-        output += i
-    return output.strip()
-
-LENGTH = 25
-LINE_WORD_LIMIT = 10
-
-terminal = Terminal()
-backdrop = ""
-redraw = terminal.home + backdrop + terminal.clear
-complete = terminal.white_on_darkkhaki
-incomplete = terminal.black_on_darkkhaki
-challenge = Challenge(LENGTH, complete, incomplete)
-
-print(terminal.home + terminal.clear + terminal.move_y(terminal.height // 2))
-print(terminal.black_on_darkkhaki(terminal.center(str(LENGTH) + " word challenge generated; press any key to continue...")))
-
-initial_time = None
-final_time = None
-
-with terminal.cbreak(), terminal.hidden_cursor():
-    inp = terminal.inkey()
-    print(terminal.home + terminal.clear)
-    stack = []
-    while True:
-        print(redraw + challenge.render(LINE_WORD_LIMIT))
-        # print(redraw + challenge.render(LINE_WORD_LIMIT))
-        # print(terminal.move_down(1) + complete(generate_word(stack)))
-        if challenge.finish():
-            final_time = time.time()
-            words_per_minute = (LENGTH * 60) // (final_time - initial_time)
-            print(terminal.move_down(1) + terminal.center(incomplete("Finished! Recorded " + str(words_per_minute))))
-            break
-        inp = terminal.inkey()
-        if initial_time == None:
-            initial_time = time.time()
-        if inp.code == terminal.KEY_BACKSPACE:
-            if len(stack) != 0:
-                del stack[-1]
-        else:
-            stack.append(inp)
-        challenge.press(stack)
+    def main_loop(self):
+        self.terminal.enter_fullscreen
+        redraw = self.terminal.home + self.terminal.clear
+        with self.terminal.cbreak(), self.terminal.hidden_cursor():
+            print(self.terminal.home + self.terminal.clear + self.terminal.move_y(self.terminal.height // 2))
+            print(self.theme.incomplete(self.terminal.center(str(self.length) + " word challenge generated; press any key to continue...")))
+            inp = self.terminal.inkey()
+            print(redraw)
+            current_stack = []
+            while True:
+                print(redraw + self.render(current_stack))
+                if self.finish():
+                    self.final_time = time.time()
+                    words_per_minute = (self.length * 60) // (self.final_time - self.initial_time)
+                    print(self.theme.incomplete(self.terminal.center("Finished! Recorded " + str(words_per_minute))))
+                    break
+                inp = self.terminal.inkey()
+                if self.initial_time == None:
+                    self.initial_time = time.time()
+                if inp.code == self.terminal.KEY_BACKSPACE:
+                    if len(current_stack) != 0:
+                        del current_stack[-1]
+                else:
+                    current_stack.append(inp)
+                # self.press(current_stack)

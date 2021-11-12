@@ -8,7 +8,7 @@
             "name": "Typing Test",
             "type": "python",
             "request": "launch",
-            "program": "./src/main.py",
+            "program": "./src/driver.py",
             "console": "integratedTerminal"
         },
         {

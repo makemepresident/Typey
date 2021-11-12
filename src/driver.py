@@ -5,6 +5,8 @@
 * Responsible for starting and stopping game loop (automatic retries, generate new)
 '''
 
+from challenge import Challenge
+from theme import Theme
 import argparse
 
 parser = argparse.ArgumentParser("Create a typing challenge for a certain amount of words")
@@ -14,4 +16,9 @@ parser.add_argument("--t", dest="theme", default="default", help="Typing test th
 
 args = parser.parse_args()
 
+challenge = Challenge(args.length, Theme(args.theme))
+
 all_words = open("./assets/1-1000.txt").read().split()  # read all words in 1-1000.txt
+
+challenge.generate_challenge(all_words)
+challenge.main_loop()
