@@ -52,11 +52,10 @@ class Challenge:
         incorrect_characters = 0
         err = False
         for i in range(len(self.stack)):
-            if self.stack[i] == " ":
+            if self.stack[i] == " " or i == len(self.stack) - 1:
                 if err:
                     incorrect_words += 1
                 err = False
-                continue
             if self.stack[i] != self.final_stack[i]:
                 incorrect_characters += 1
                 err = True
