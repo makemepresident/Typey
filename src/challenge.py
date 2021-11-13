@@ -47,16 +47,20 @@ class Challenge:
                 output += self.theme.incomplete(self.stack[i])
         return final + self.theme.backdrop(self.terminal.center(output))
 
-    # def evaluate_accuracy(self, final_stack):
-    #     incorrect_words = 0
-    #     for i in range(len(self.stack)):
-    #         if self.stack[i] == " ":
-    #             if err:
-    #                 incorrect_words += 1
-    #             err = False
-    #             continue
-    #         if self.stack[i] != final_stack[i]:
-    #             err = True
+    def evaluate_accuracy(self):
+        incorrect_words = 0
+        incorrect_characters = 0
+        err = False
+        for i in range(len(self.stack)):
+            if self.stack[i] == " ":
+                if err:
+                    incorrect_words += 1
+                err = False
+                continue
+            if self.stack[i] != self.final_stack[i]:
+                incorrect_characters += 1
+                err = True
+        return len(self.stack) - incorrect_characters, self.length - incorrect_words
 
     def main_loop(self):
         redraw = self.terminal.home + self.terminal.clear

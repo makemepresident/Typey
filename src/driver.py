@@ -35,8 +35,11 @@ while True:
             challenge.reset()
         reset = True
         if challenge.main_loop():
-            words_per_minute = str((challenge.length * 60) / (challenge.final_time - challenge.initial_time))
-            print(terminal.home + terminal.clear + terminal.move_y(terminal.height // 2) + theme.incomplete(terminal.center(words_per_minute[:words_per_minute.index(".") + 2] + " WPM")))
+            characters, words = challenge.evaluate_accuracy()
+            raw_wpm = str((challenge.length * 60) / (challenge.final_time - challenge.initial_time))
+            wpm = str((words * 60) / (challenge.final_time - challenge.initial_time))
+            cpm = str(characters * 60 / (challenge.final_time - challenge.initial_time))
+            print(terminal.home + terminal.clear + terminal.move_y(terminal.height // 2) + theme.incomplete(terminal.center(raw_wpm[:raw_wpm.index(".") + 2] + " RAW; " + wpm[:wpm.index(".") + 2] + " WPM; " + cpm[:cpm.index(".") + 2] + " CPM")))
             print(theme.incomplete(terminal.center("Press tab to start a new challenge; press any other key to try the same challenge again...")))
             with terminal.cbreak(), terminal.hidden_cursor():
                 inp = terminal.inkey()
