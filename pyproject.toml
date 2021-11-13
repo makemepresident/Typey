@@ -1,0 +1,6 @@
+[build-system]
+requires = [
+    "setuptools",
+    "blessed"
+]
+build-backend = "setuptools.build_meta"

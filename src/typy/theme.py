@@ -1,12 +1,14 @@
 from blessed import Terminal
 import json
+import pkg_resources
 
 class Theme:
 
     def __init__(self, name) -> None:
         terminal = Terminal()
+        res = pkg_resources.resource_filename("typy", "./assets/themes.json")
         try:
-            file = open("./assets/themes.json", "r")
+            file = open(res, "r")
             js = json.load(file)
             if name != "typy_default":
                 self.complete = getattr(terminal, js[name]["c"])
@@ -18,9 +20,8 @@ class Theme:
             else:
                 self.setTyPyDefault(terminal, js)
             if name != "default":
-                
                 try:
-                    file = open("./assets/themes.json", "w")
+                    file = open(res, "w")
                     json.dump(js, file, indent=4)
                 except:
                     raise Exception
