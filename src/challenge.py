@@ -39,10 +39,10 @@ class Challenge:
             if i < len(current_stack):
                 if self.stack[i] == current_stack[i]:
                     output += self.theme.complete(self.stack[i])
-                    if i == len(self.stack) - 1:
-                        self.finished = True
                 else:
                     output += self.terminal.on_red(self.stack[i])
+                if i == len(self.stack) - 1:
+                        self.finished = True
             else:
                 output += self.theme.incomplete(self.stack[i])
         return final + self.theme.backdrop(self.terminal.center(output))
