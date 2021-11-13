@@ -6,11 +6,11 @@ class Theme:
 
     def __init__(self, name) -> None:
         terminal = Terminal()
-        res = pkg_resources.resource_filename("typy", "./assets/themes.json")
+        res = pkg_resources.resource_filename("typey", "./assets/themes.json")
         try:
             file = open(res, "r")
             js = json.load(file)
-            if name != "typy_default":
+            if name != "typey_default":
                 self.complete = getattr(terminal, js[name]["c"])
                 self.incomplete = getattr(terminal, js[name]["i"])
                 self.backdrop = getattr(terminal, js[name]["b"])
@@ -18,7 +18,7 @@ class Theme:
                 js["default"]["i"] = js[name]["i"]
                 js["default"]["b"] = js[name]["b"]
             else:
-                self.setTyPyDefault(terminal, js)
+                self.setTypeyDefault(terminal, js)
             if name != "default":
                 try:
                     file = open(res, "w")
@@ -26,9 +26,9 @@ class Theme:
                 except:
                     raise Exception
         except Exception as e:
-            self.setTyPyDefault(terminal)
+            self.setTypeyDefault(terminal)
     
-    def setTyPyDefault(self, terminal, js=None):
+    def setTypeyDefault(self, terminal, js=None):
         if js != None:
             js["default"]["c"] = "white_on_darkkhaki"
             js["default"]["i"] = "black_on_darkkhaki"
