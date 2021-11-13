@@ -18,7 +18,7 @@
             "request": "launch",
             "program": "./src/driver.py",
             "console": "integratedTerminal",
-            "args": ["--l", "10", "--t", "hyperfuse"] 
+            "args": ["--l", "30", "--t", "minimal"] 
         }
     ]
 }
