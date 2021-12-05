@@ -6,6 +6,7 @@ class Theme:
 
     def __init__(self, name) -> None:
         terminal = Terminal()
+        defaults = pkg_resources.resource_filename("typey", "defaults.json")
         res = pkg_resources.resource_filename("typey", "./assets/themes.json")
         try:
             file = open(res, "r")

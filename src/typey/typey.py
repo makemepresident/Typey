@@ -9,11 +9,15 @@ from .challenge import Challenge
 from .theme import Theme
 import argparse
 import pkg_resources
+import json
 
 def main():
+    defaults = json.load(pkg_resources.resource_string('typey', 'defaults.json'))
+    
+
     parser = argparse.ArgumentParser("Create quick, repeatable, regenerative typing tests in your terminal.")
-    parser.add_argument("--l", dest="length", default="25", help="Length of the typing test in words. Has an upper limit of 50 due to rendering issues** DEFAULT=25")
-    parser.add_argument("--t", dest="theme", default="default", help="Colour theme of the terminal; changing this will set a new default in JSON. Try \"typey_default\" to reset the terminal back to the original theme. DEFAULT=on_darkkhaki")
+    parser.add_argument("--l", dest="length", default=defaults["default_length"], help="Length of the typing test in words. Has an upper limit of 50 due to rendering issues** DEFAULT=25")
+    parser.add_argument("--t", dest="theme", default=defaults["default_theme"], help="Colour theme of the terminal; changing this will set a new default in JSON. Try \"typey_default\" to reset the terminal back to the original theme. DEFAULT=on_darkkhaki")
     args = parser.parse_args()
 
     if int(args.length) > 50:
