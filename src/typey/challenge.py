@@ -77,6 +77,7 @@ class Challenge:
                 if self.finished:
                     self.final_time = time.time()
                     self.final_stack = current_stack # can be used for analysis
+                    self.has_reset = True
                     return True
                 inp = self.terminal.inkey()
                 if self.initial_time == None:
@@ -87,7 +88,7 @@ class Challenge:
                 elif inp.code == self.terminal.KEY_ESCAPE:
                     return False
                 elif inp.code == self.terminal.KEY_TAB:
-                    self.reset()
+                    self.generate_challenge()
                     current_stack = []
                 else:
                     current_stack.append(inp)
