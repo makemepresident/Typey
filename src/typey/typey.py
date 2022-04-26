@@ -11,66 +11,55 @@ from challenge import Challenge
 from filecontroller import FileController
 import argparse
 
-def main():
+def init_parser():
     defaults = FileController.getDefaults()
     parser = argparse.ArgumentParser("Create quick, repeatable, regenerative typing tests in your terminal.")
     parser.add_argument("--l", "--length", dest="length", default=defaults["default_length"], help="Length of the typing test in words.")
     parser.add_argument("--t", "--theme", dest="theme", default=defaults["default_theme"], help="Temporarily changes the theme of the typing test; use --dt to set a default theme")
-    parser.add_argument("--dt", "--default_theme", dest="default_theme", action="store_true", help="Set a new default theme defined in themes.json.")
+    parser.add_argument("--dt", "--default_theme", dest="default_theme", help="Set a new default theme defined in themes.json.")
     parser.add_argument("--dl", "--default_length", dest="default_length", action="store_true", help="Set a new default length.")
-    parser.add_argument("--at", "--add_theme", dest="add_theme", action="store_true", help="Add a new theme to themes.json in the form: \"name,completed,incomplete,backdrop\"")
+    parser.add_argument("--at", "--add_theme", dest="add_theme", help="Add a new theme to themes.json in the form: \"name,completed,incomplete,backdrop\"")
     parser.add_argument("--lt", "--list_themes", dest="list_themes", action="store_true", help="List all themes available for Typey.")
-    parser.add_argument("--d", "--defaults", dest="defaults", action="store_true", help="Reset to Typey defaults.")
-    args = parser.parse_args()
+    parser.add_argument("--d", "--defaults", dest="defaults", help="Reset to Typey defaults.")
+    return parser
 
+def handle_args(args):
+    '''
+    Used to deal with terminal arguments pertaining to modifying settings or adding and viewing themes
+    '''
+    # constrain length
     if int(args.length) > 100:
         args.length = 100
     elif int(args.length) < 1:
         args.length = 1
-
     option_changed = False
-    if args.default_theme:
-        try:
+    try:
+        if args.default_theme:
             FileController.setNewDefaultTheme(args.default_theme)
             option_changed = True
-        except Exception as e:
-            print(e.args)
-
-    if args.default_length:
-        try:
+        if args.default_length:
             FileController.setNewDefaultLength(args.default_length)
             option_changed = True
-        except Exception as e:
-            print(e.args)
-
-    if args.add_theme:
-        try:
-            FileController.addNewTheme(args.add_theme)
+        if args.add_theme:
+            FileController.addTheme(Terminal(), *args.add_theme.split(","))
             option_changed = True
-        except Exception as e:
-            print(e.args)
-
-    if args.list_themes:
-        try:
+        if args.list_themes:
             FileController.listThemes()
             option_changed = True
-        except Exception as e:
-            print(e.args)
-
-    if args.defaults:
-        try:
+        if args.defaults:
             FileController.setNewDefaultLength(25)
             FileController.setNewDefaultTheme("typey_default")
             option_changed = True
-        except Exception as e:
-            print(e.args)
+        if option_changed:
+            exit()
+    except Exception as e:
+        exit(e.args)
 
-    if not option_changed:
-        terminal = Terminal()
-        theme = FileController(args.theme)
-        challenge = Challenge(args.length, theme, terminal)
-        all_words = FileController.getWords()  # read all words in 1-1000.txt
-        reset = False
+def calculate_rates(length, final_time, initial_time, words, characters):
+    raw_wpm = str((length * 60) / (final_time - initial_time))
+    wpm = str((words * 60) / (final_time - initial_time))
+    cpm = str(characters * 60 / (final_time - initial_time))
+    return raw_wpm, wpm, cpm
 
 def main():
     args = init_parser().parse_args()

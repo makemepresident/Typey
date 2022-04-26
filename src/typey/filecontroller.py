@@ -1,5 +1,7 @@
 import json
+import os
 import pkg_resources
+from types import SimpleNamespace
 
 class FileController:
 
@@ -29,21 +31,20 @@ class FileController:
             return json.load(f)
 
     @staticmethod
-    def getTheme(self, terminal, name) -> None:
+    def getTheme(terminal, name) -> None:
         try:
             js = json.load(open(FileController.themes_path, "r"))
             if name in js:
-                return {"complete": getattr(terminal, js[name]["complete"]), "incomplete": getattr(terminal, js[name]["incomplete"]), "backdrop": getattr(terminal, js[name]["backdrop"])}
+                return SimpleNamespace(**{"complete": getattr(terminal, js[name]["c"]), "incomplete": getattr(terminal, js[name]["i"]), "backdrop": getattr(terminal, js[name]["b"])})
         except:
-            return {"complete": terminal.white_on_darkkhaki, "incomplete": terminal.black_on_darkkhaki, "backdrop": terminal.on_darkkhaki}
+            return SimpleNamespace(**{"complete": terminal.white_on_darkkhaki, "incomplete": terminal.black_on_darkkhaki, "backdrop": terminal.on_darkkhaki})
 
     @staticmethod
     def addTheme(terminal, name, complete, incomplete, backdrop):
-        file = open(FileController.themes_path, "r+")
-        js = json.load(file)
+        js = json.load(open(FileController.themes_path, "r"))
         if hasattr(terminal, complete) and hasattr(terminal, incomplete) and hasattr(terminal, backdrop):
             js[name] = {"c": complete, "i": incomplete, "b": backdrop}
-            json.dump(js, file, indent=4)
+            json.dump(js, open(FileController.themes_path, "w"), indent=4)
         else:
             raise Exception("Unable to find terminal colors")
 
@@ -56,13 +57,11 @@ class FileController:
         Check if the theme exists
         If it does, set the default theme value in the defaults file to the theme name
         '''
-        themes_file = open(FileController.themes_path, "r+")
-        themes_js = json.load(themes_file)
+        themes_js = json.load(open(FileController.themes_path, "r"))
         if theme_name in themes_js:
-            defaults_file = open(FileController.defaults_path, "r+")
-            defaults_js = json.load(defaults_file)
+            defaults_js = json.load(open(FileController.defaults_path, "r"))
             defaults_js["default_theme"] = theme_name
-            json.dump(defaults_js, defaults_file, indent=4)
+            json.dump(defaults_js, open(FileController.defaults_path, "w"), indent=4)
         else:
             raise Exception("Theme not found in themes.json")
 
