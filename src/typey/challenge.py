@@ -1,21 +1,21 @@
-from blessed import Terminal
 from random import randint
 import time
 
 class Challenge:
 
-    def __init__(self, length, theme, terminal) -> None:
+    def __init__(self, length, theme, terminal, all_words) -> None:
         self.terminal = terminal
         self.length = int(length)
         self.theme = theme
+        self.all_words = all_words
+        self.has_reset = False
 
-    def generate_challenge(self, word_list):
+    def generate_challenge(self):
         self.initial_time = None
         self.finished = False
-        self.has_reset = False
         self.stack = []
         for i in range(self.length):
-            word = word_list[randint(0, len(word_list) - 1)]
+            word = self.all_words[randint(0, len(self.all_words) - 1)]
             for letter in word:
                 self.stack.append(letter)
             if i != self.length - 1:
@@ -67,7 +67,7 @@ class Challenge:
             if not self.has_reset:
                 print(self.terminal.home + self.terminal.clear + self.terminal.move_y(self.terminal.height // 2))
                 print(self.theme.incomplete(self.terminal.center(str(self.length) + " word challenge generated:")))
-                print(self.theme.incomplete(self.terminal.center("Press ESC at any time to exit; press TAB at any time to reset; press any key to continue...")))
+                print(self.theme.incomplete(self.terminal.center("Press ESC at any time to exit; press TAB at any time to reset and generate a new challenge; press any key to continue...")))
                 inp = self.terminal.inkey()
                 if inp.code == self.terminal.KEY_ESCAPE:
                     return False

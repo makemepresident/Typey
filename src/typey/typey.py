@@ -72,30 +72,34 @@ def main():
         all_words = FileController.getWords()  # read all words in 1-1000.txt
         reset = False
 
-        while True:
-            with terminal.fullscreen():
-                if not reset:
-                    challenge.generate_challenge(all_words)
-                else:
-                    challenge.reset()
-                reset = True
-                if challenge.main_loop():
-                    characters, words = challenge.evaluate_accuracy()
-                    raw_wpm = str((challenge.length * 60) / (challenge.final_time - challenge.initial_time))
-                    wpm = str((words * 60) / (challenge.final_time - challenge.initial_time))
-                    cpm = str(characters * 60 / (challenge.final_time - challenge.initial_time))
-                    print(terminal.home + terminal.clear + terminal.move_y(terminal.height // 2) + theme.incomplete(terminal.center(raw_wpm[:raw_wpm.index(".") + 2] + " RAW; " + wpm[:wpm.index(".") + 2] + " WPM; " + cpm[:cpm.index(".") + 2] + " CPM")))
-                    print(theme.incomplete(terminal.center("Press tab to start a new challenge; press any other key to try the same challenge again...")))
-                    with terminal.cbreak(), terminal.hidden_cursor():
-                        inp = terminal.inkey()
-                        if inp.code == terminal.KEY_TAB:
-                            reset = False
-                        elif inp.code == terminal.KEY_ESCAPE:
-                            print(terminal.home + terminal.clear)
-                            exit()
-                else:
-                    exit()
-    else:
-        exit()
+def main():
+    args = init_parser().parse_args()
+    handle_args(args)
+    terminal = Terminal() # init main terminal
+    theme = FileController.getTheme(terminal, args.theme)
+    all_words = FileController.getWords()  # read all words in 1-1000.txt
+    challenge = Challenge(args.length, theme, terminal, all_words)
+    reset = False
+    while True:
+        with terminal.fullscreen():
+            if not reset:
+                challenge.generate_challenge()
+            else:
+                challenge.reset()
+            reset = True
+            if challenge.main_loop():
+                characters, words = challenge.evaluate_accuracy()
+                raw_wpm, wpm, cpm = calculate_rates(challenge.length, challenge.final_time, challenge.initial_time, words, characters)
+                print(terminal.home + terminal.clear + terminal.move_y(terminal.height // 2) + theme.incomplete(terminal.center(raw_wpm[:raw_wpm.index(".") + 2] + " RAW; " + wpm[:wpm.index(".") + 2] + " WPM; " + cpm[:cpm.index(".") + 2] + " CPM")))
+                print(theme.incomplete(terminal.center("Press tab to start a new challenge; press any other key to try the same challenge again...")))
+                with terminal.cbreak(), terminal.hidden_cursor():
+                    inp = terminal.inkey()
+                    if inp.code == terminal.KEY_TAB:
+                        reset = False
+                    elif inp.code == terminal.KEY_ESCAPE:
+                        print(terminal.home + terminal.clear)
+                        exit()
+            else:
+                exit()
 
 main()
