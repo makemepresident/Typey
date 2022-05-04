@@ -19,6 +19,13 @@
             "program": "./src/driver.py",
             "console": "integratedTerminal",
             "args": ["--l", "30", "--t", "minimal"] 
+        },
+        {
+            "name": "Blessed Test",
+            "type": "python",
+            "request": "launch",
+            "program": "./testing.py",
+            "console": "integratedTerminal",
         }
     ]
 }
