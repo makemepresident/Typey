@@ -13,13 +13,17 @@ class Challenge:
     def generate_challenge(self):
         self.initial_time = None
         self.finished = False
-        self.stack = []
+        self.stack_stack = [] # stack of word stacks i.e. stack of stacks
+        max_chars = self.terminal.width - self.terminal.width // 3
+        temp_stack = []
         for i in range(self.length):
             word = self.all_words[randint(0, len(self.all_words) - 1)]
-            for letter in word:
-                self.stack.append(letter)
-            if i != self.length - 1:
-                self.stack.append(" ")
+            if len(word) + len(temp_stack) >= max_chars:
+                self.stack_stack.append(temp_stack.copy())
+                temp_stack = []
+            temp_stack + list(word)
+            if i != self.length - 1: # add spaces between each word
+                temp_stack.append(" ")
 
     def reset(self):
         self.initial_time = None
@@ -62,33 +66,47 @@ class Challenge:
         return len(self.stack) - incorrect_characters, self.length - incorrect_words
 
     def main_loop(self):
-        redraw = self.terminal.home + self.terminal.clear
-        with self.terminal.cbreak(), self.terminal.hidden_cursor():
-            if not self.has_reset:
-                print(self.terminal.home + self.terminal.clear + self.terminal.move_y(self.terminal.height // 2))
-                print(self.theme.incomplete(self.terminal.center(str(self.length) + " word challenge generated:")))
-                print(self.theme.incomplete(self.terminal.center("Press ESC at any time to exit; press TAB at any time to reset and generate a new challenge; press any key to continue...")))
-                inp = self.terminal.inkey()
-                if inp.code == self.terminal.KEY_ESCAPE:
-                    return False
-            current_stack = []
-            while True:
-                print(redraw + self.terminal.move_y(self.terminal.height // 2) + self.render(current_stack))
-                if self.finished:
-                    self.final_time = time.time()
-                    self.final_stack = current_stack # can be used for analysis
-                    self.has_reset = True
-                    return True
-                inp = self.terminal.inkey()
-                if self.initial_time == None:
-                    self.initial_time = time.time()
-                if inp.code == self.terminal.KEY_BACKSPACE:
-                    if len(current_stack) != 0:
-                        del current_stack[-1]
-                elif inp.code == self.terminal.KEY_ESCAPE:
-                    return False
-                elif inp.code == self.terminal.KEY_TAB:
-                    self.generate_challenge()
-                    current_stack = []
+        # initialize background
+        th2 = self.terminal.height // 2 # half of terminal height
+        ss2 = len(self.stack_stack) // 2 # half of stack height (to center it on screen)
+        starting_line = th2 - ss2
+        ending_line = th2 + ss2
+        for i in range(self.terminal.height):
+            for j in range(self.terminal.width):
+                if i >= starting_line or i <= ending_line:
+                    print(self.render(self.stack_stack[i - starting_line]))
                 else:
-                    current_stack.append(inp)
+                    print(self.theme.backdrop + " ")
+        print(self.terminal.home, end="")
+        with self.terminal.cbreak(), self.terminal.hidden_cursor():
+            print(self.terminal.move_y(th2), end="")
+        # redraw = self.terminal.home + self.terminal.clear
+        # with self.terminal.cbreak(), self.terminal.hidden_cursor():
+        #     if not self.has_reset:
+        #         print(self.terminal.home + self.terminal.clear + self.terminal.move_y(self.terminal.height // 2))
+        #         print(self.theme.incomplete(self.terminal.center(str(self.length) + " word challenge generated:")))
+        #         print(self.theme.incomplete(self.terminal.center("Press ESC at any time to exit; press TAB at any time to reset and generate a new challenge; press any key to continue...")))
+        #         inp = self.terminal.inkey()
+        #         if inp.code == self.terminal.KEY_ESCAPE:
+        #             return False
+        #     current_stack = []
+        #     while True:
+        #         print(redraw + self.terminal.move_y(self.terminal.height // 2) + self.render(current_stack))
+        #         if self.finished:
+        #             self.final_time = time.time()
+        #             self.final_stack = current_stack # can be used for analysis
+        #             self.has_reset = True
+        #             return True
+        #         inp = self.terminal.inkey()
+        #         if self.initial_time == None:
+        #             self.initial_time = time.time()
+        #         if inp.code == self.terminal.KEY_BACKSPACE:
+        #             if len(current_stack) != 0:
+        #                 del current_stack[-1]
+        #         elif inp.code == self.terminal.KEY_ESCAPE:
+        #             return False
+        #         elif inp.code == self.terminal.KEY_TAB:
+        #             self.generate_challenge()
+        #             current_stack = []
+        #         else:
+        #             current_stack.append(inp)
