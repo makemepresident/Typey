@@ -30,9 +30,10 @@ class Challenge:
         final = ""
         output = ""
         width_check = 0
+        padded_width = self.terminal.width - (self.terminal.width // 3)
         for i in range(len(self.stack)):
             width_check += 1
-            if width_check > self.terminal.width - (self.terminal.width // 3) and self.stack[i] == " ":
+            if width_check > padded_width and self.stack[i] == " ":
                 final += self.theme.backdrop(self.terminal.center(output))
                 output = ""
                 width_check = 0
