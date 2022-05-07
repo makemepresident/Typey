@@ -16,7 +16,7 @@ The extremely overpopulated help menu can be accessed with:
 
 `typey --h`
 
-![Available Commands](./images/sc2.png "Typey --h")
+![Available Commands](./images/sc2.jpg "Typey --h")
 
 By default, Typey will start with a 25 word typing test because it's quick and allows you to pad your WPM - I mean be productive. Pressing tab at any time during the test will REDO (REDO REDO REDO); pressing ESC at any point will exit the test and allow you to move on with your life.
 
