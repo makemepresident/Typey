@@ -5,7 +5,7 @@ testing.py
 __pycache__/
 *.py[cod]
 *$py.class
-typey todo.txt
+todo.txt
 
 # C extensions
 *.so
