@@ -5,10 +5,10 @@
 * Responsible for starting and stopping game loop (automatic retries, generate new)
 '''
 from blessed import Terminal
-# from .challenge import Challenge
-# from .theme import Theme
-from challenge import Challenge
-from filecontroller import FileController
+from .challenge import Challenge
+from .filecontroller import FileController
+# from challenge import Challenge
+# from filecontroller import FileController
 import argparse
 
 def init_parser():
