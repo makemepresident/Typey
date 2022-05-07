@@ -1,8 +1,0 @@
-create hotkey for instantly regenerating test
-create continuous test for time-based test (fix render function)
-remove text on details; move to --help flag
-create config file with ability to set default theme and default length
-create --lt (list themes) command
-add at least 3 new themes
-try getting backdrop to properly set and reset
-add more tags to typey to make it more easily searchable
