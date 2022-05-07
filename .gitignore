@@ -5,6 +5,8 @@ testing.py
 __pycache__/
 *.py[cod]
 *$py.class
+setup.py
+pyproject.toml
 todo.txt
 
 # C extensions
