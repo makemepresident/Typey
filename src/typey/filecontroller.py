@@ -5,7 +5,7 @@ from types import SimpleNamespace
 class FileController:
 
     themes_path = pkg_resources.resource_filename("typey", "./assets/themes.json")
-    defaults_path = pkg_resources.resource_filename("typey", "./assets/defaults.json")
+    defaults_path = pkg_resources.resource_filename("typey", "./assets/config.json")
     words_path = pkg_resources.resource_filename("typey", "./assets/1-1000.txt")
     # themes_path = './src/typey/assets/themes.json'
     # defaults_path = './src/typey/assets/config.json'

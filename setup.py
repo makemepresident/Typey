@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="Typey",
-    version="1.0.1",
+    version="1.0.4",
     author="makemepresident",
     description="A terminal typing test based on the likes of \
         monkeytype.gg and typings.gg, visualized with the blessed library.",
