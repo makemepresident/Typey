@@ -41,7 +41,7 @@ class Challenge:
         padded_width = self.terminal.width - (self.terminal.width // 3) # aesthetic centering
         for i in range(len(self.stack)):
             width_check += 1
-            if width_check > padded_width and self.stack[i] == " ": # if words at width limit and current item is a space (space sends to next line)
+            if (width_check > padded_width or width_check > 100) and self.stack[i] == " ": # if words at width limit and current item is a space (space sends to next line)
                 final += self.theme.backdrop(self.terminal.center(output))
                 output = ""
                 width_check = 0
