@@ -16,6 +16,7 @@ class Challenge:
         self.initial_time = None
         self.finished = False
         self.stack = []
+        self.evaluation_stack = []
         for i in range(self.length):
             word = self.all_words[randint(0, len(self.all_words) - 1)]
             for letter in word:
@@ -29,6 +30,8 @@ class Challenge:
         self.finished = False
         self.has_reset = True
         self.stack = self.reset_stack.copy()
+        self.evaluation_stack = []
+        self.no_render = False
 
     def render(self, current_stack):
         lines_rendered = 0 # visible lines in terminal
@@ -47,26 +50,28 @@ class Challenge:
                 if lines_rendered == 3: # compact lines rendered due to performance issues
                     break
             if i < len(current_stack): # current element must be a letter that was written or incorrect
+                if not self.no_render and i in self.cutoff_indices:
+                    '''
+                    Due to performance reasons, the rendering algorithm has to be "smart".
+                    3 lines are rendered at a time and the indices of the effective \n is
+                    recorded. When an index is reached, we checked to see if the finish
+                    flag has been set (no_render) and if not, we remove the completed
+                    portion of the stack and its corresponding cutoff index from the 
+                    global set. The current stack is cleared (as it must have matched)
+                    and render is called recursively to update the first line graphically.
+                    '''
+                    self.stack = self.stack[i + 1:]
+                    self.cutoff_indices.remove(i)
+                    self.evaluation_stack += current_stack
+                    current_stack.clear()
+                    return self.render(current_stack)
                 if self.stack[i] == current_stack[i]: # letter is correct
-                    if not self.no_render and i in self.cutoff_indices:
-                        '''
-                        Due to performance reasons, the rendering algorithm has to be "smart".
-                        3 lines are rendered at a time and the indices of the effective \n is
-                        recorded. When an index is reached, we checked to see if the finish
-                        flag has been set (no_render) and if not, we remove the completed
-                        portion of the stack and its corresponding cutoff index from the 
-                        global set. The current stack is cleared (as it must have matched)
-                        and render is called recursively to update the first line graphically.
-                        '''
-                        self.stack = self.stack[i + 1:]
-                        self.cutoff_indices.remove(i)
-                        current_stack.clear()
-                        return self.render(current_stack)
                     output += self.theme.complete(self.stack[i])
                 else:
                     output += self.terminal.on_red(self.stack[i]) # incorrect
                 if i == len(self.stack) - 1: # finish challenge
                     self.finished = True
+                    self.evaluation_stack += current_stack
             else:
                 output += self.theme.incomplete(self.stack[i]) # normal lettering (not yet reached)
         # two cases as final output gets concatenated and no_render needs to be thrown so all lines do not get deleted at end of challenge
@@ -80,12 +85,12 @@ class Challenge:
         incorrect_words = 0
         incorrect_characters = 0
         err = False
-        for i in range(len(self.stack)):
-            if self.stack[i] == " " or i == len(self.stack) - 1:
+        for i in range(len(self.reset_stack)):
+            if self.reset_stack[i] == " " or i == len(self.reset_stack) - 1:
                 if err:
                     incorrect_words += 1
                 err = False
-            if self.stack[i] != self.final_stack[i]:
+            if self.reset_stack[i] != self.evaluation_stack[i]:
                 incorrect_characters += 1
                 err = True
         return len(self.stack) - incorrect_characters, self.length - incorrect_words
@@ -105,7 +110,6 @@ class Challenge:
                 print(redraw + self.terminal.move_y(self.terminal.height // 2) + self.render(current_stack))
                 if self.finished:
                     self.final_time = time.time()
-                    self.final_stack = current_stack # can be used for analysis
                     self.has_reset = True
                     return True
                 inp = self.terminal.inkey()

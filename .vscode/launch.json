@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "./src/typey/typey.py",
             "console": "integratedTerminal",
-            "args": ["--l", "20"]
+            "args": ["--l", "40"]
         },
         {
             "name": "Theme Test",
