@@ -8,17 +8,32 @@
             "name": "Typing Test",
             "type": "python",
             "request": "launch",
-            "program": "./src/driver.py",
+            "program": "./src/typey/typey.py",
             "console": "integratedTerminal",
-            "args": ["--l", "10"]
+            "args": ["--l", "40"]
         },
         {
             "name": "Theme Test",
             "type": "python",
             "request": "launch",
-            "program": "./src/driver.py",
+            "program": "./src/typey/typey.py",
             "console": "integratedTerminal",
             "args": ["--l", "30", "--t", "minimal"] 
+        },
+        {
+            "name": "Help Test",
+            "type": "python",
+            "request": "launch",
+            "program": "./src/typey/typey.py",
+            "console": "integratedTerminal",
+            "args": ["--h"] 
+        },
+        {
+            "name": "Blessed Test",
+            "type": "python",
+            "request": "launch",
+            "program": "./testing.py",
+            "console": "integratedTerminal",
         }
     ]
 }

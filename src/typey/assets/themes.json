@@ -1,8 +1,8 @@
 {
-    "default": {
-        "c": "grey_on_white",
-        "i": "black_on_white",
-        "b": "on_white"
+    "typey_default": {
+        "c": "white_on_darkkhaki",
+        "i": "black_on_darkkhaki",
+        "b": "on_darkkhaki"
     },
     "minimal": {
         "c": "grey_on_white",
