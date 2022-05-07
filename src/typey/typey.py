@@ -17,7 +17,7 @@ def init_parser():
     parser.add_argument("--l", "--length", dest="length", default=defaults["default_length"], help="Length of the typing test in words.")
     parser.add_argument("--t", "--theme", dest="theme", default=defaults["default_theme"], help="Temporarily changes the theme of the typing test; use --dt to set a default theme")
     parser.add_argument("--dt", "--default_theme", dest="default_theme", help="Set a new default theme defined in themes.json.")
-    parser.add_argument("--dl", "--default_length", dest="default_length", action="store_true", help="Set a new default length.")
+    parser.add_argument("--dl", "--default_length", dest="default_length", help="Set a new default length.")
     parser.add_argument("--at", "--add_theme", dest="add_theme", help="Add a new theme to themes.json in the form: \"name,completed,incomplete,backdrop\" from https://blessed.readthedocs.io/en/latest/colors.html")
     parser.add_argument("--lt", "--list_themes", dest="list_themes", action="store_true", help="List all themes available for Typey.")
     parser.add_argument("--d", "--defaults", dest="defaults", help="Reset to Typey defaults.")
@@ -28,8 +28,8 @@ def handle_args(args):
     Used to deal with terminal arguments pertaining to modifying settings or adding and viewing themes
     '''
     # constrain length
-    if int(args.length) > 100:
-        args.length = 100
+    if int(args.length) > 1000:
+        args.length = 1000
     elif int(args.length) < 1:
         args.length = 1
     option_changed = False

@@ -66,10 +66,12 @@ class FileController:
 
     @staticmethod
     def setNewDefaultLength(length):
-        if isinstance(length, int) and length > 0 and length < 100:
-            defaults_file = open(FileController.defaults_path, "r+")
-            defaults_js = json.load(defaults_file)
-            defaults_js["default_length"] = length
-            json.dump(defaults_js, defaults_file, indent=4)
-        else:
+        try:
+            length = int(length)
+            if length > 0 and length < 1000:
+                defaults_file = open(FileController.defaults_path, "r+")
+                defaults_js = json.load(defaults_file)
+                defaults_js["default_length"] = length
+                json.dump(defaults_js, open(FileController.defaults_path, "w"), indent=4)
+        except:
             raise Exception("Length must be an integer between 0 and 100")
