@@ -9,6 +9,7 @@ setup.py
 pyproject.toml
 todo.txt
 todo.txt.bak
+todo.md
 
 # C extensions
 *.so
